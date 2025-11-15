@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -68,3 +69,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+=======
+# Music-player
+A simple, intuitive, and efficient local music player designed for seamless playback of your personal audio library. Enjoy a clean user interface, essential playback controls, and robust organization features for your music collection.
+>>>>>>> e8f1f566dbff1e2e5d9e09a9e3cd76b9c6e2cfd6

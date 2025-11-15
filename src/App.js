@@ -1,10 +1,10 @@
-import React from "react";
+import PlayerCore from "./components/PlayerCore";
 
 function App() {
   return (
-    <div className="app-container">
+    <div>
       <h1>Music Player App</h1>
-      <p>Feature development in progress...</p>
+      <PlayerCore />
     </div>
   );
 }
