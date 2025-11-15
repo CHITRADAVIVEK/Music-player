@@ -1,7 +1,12 @@
-import Playlist from "./components/Playlist";
-<Playlist
-  playlist={playlist}
-  currentIndex={currentIndex}
-  onSelect={(index) => playSong(index)}
-  onRemove={(index) => removeSong(index)}
-/>
+import PlayerCore from "./components/PlayerCore";
+
+function App() {
+  return (
+    <div>
+      <h1>Music Player App</h1>
+      <PlayerCore />
+    </div>
+  );
+}
+
+export default App;
