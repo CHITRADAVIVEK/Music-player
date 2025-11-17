@@ -10,15 +10,29 @@ function App() {
   const currentSong = playlist[currentIndex];
 
 
-  // Upload songs
-  const handleUpload = (files) => {
-    const newSongs = Array.from(files).map((file) => ({
-      url: URL.createObjectURL(file),
-      name: file.name
-    }));
+ // Upload songs
+const handleUpload = async (files) => {
+  const newSongs = Array.from(files).map((file) => ({
+    url: URL.createObjectURL(file),
+    name: file.name
+  }));
 
-    setPlaylist((prev) => [...prev, ...newSongs]);
-  };
+  setPlaylist((prev) => {
+    const updatedPlaylist = [...prev, ...newSongs];
+
+    // If nothing was playing, start the first uploaded song
+    if (updatedPlaylist.length > 0 && !isPlaying) {
+      audioRef.current.pause();
+      audioRef.current.src = updatedPlaylist[0].url;
+      audioRef.current.load();
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(err => console.log(err));
+      setCurrentIndex(0);
+    }
+
+    return updatedPlaylist;
+  });
+};
+
 
   // Play or Pause
  const handlePlayPause = async () => {
@@ -55,24 +69,39 @@ useEffect(() => {
 
 
   // Next Song
-  const handleNext = () => {
-    if (currentIndex + 1 < playlist.length) {
-      setCurrentIndex((prev) => prev + 1);
-      audioRef.current.src = playlist[currentIndex + 1].url;
-      audioRef.current.play();
+const handleNext = async () => {
+  if (currentIndex + 1 < playlist.length) {
+    const nextIndex = currentIndex + 1;
+    setCurrentIndex(nextIndex);
+    audioRef.current.pause();           // pause current audio
+    audioRef.current.src = playlist[nextIndex].url;
+    audioRef.current.load();            // reload audio
+    try {
+      await audioRef.current.play();    // safely play
       setIsPlaying(true);
+    } catch (err) {
+      console.log("Audio play error:", err);
     }
-  };
+  }
+};
 
-  // Previous Song
-  const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-      audioRef.current.src = playlist[currentIndex - 1].url;
-      audioRef.current.play();
+// Previous Song
+const handlePrevious = async () => {
+  if (currentIndex > 0) {
+    const prevIndex = currentIndex - 1;
+    setCurrentIndex(prevIndex);
+    audioRef.current.pause();           // pause current audio
+    audioRef.current.src = playlist[prevIndex].url;
+    audioRef.current.load();            // reload audio
+    try {
+      await audioRef.current.play();    // safely play
       setIsPlaying(true);
+    } catch (err) {
+      console.log("Audio play error:", err);
     }
-  };
+  }
+};
+
 
   // Auto-next when song finishes
   useEffect(() => {
@@ -109,20 +138,33 @@ useEffect(() => {
   };
 
   // Remove Song
-  const onRemoveSong = (index) => {
-    const updated = playlist.filter((_, i) => i !== index);
-    setPlaylist(updated);
+const onRemoveSong = async (index) => {
+  const updated = playlist.filter((_, i) => i !== index);
+  setPlaylist(updated);
 
-    if (index === currentIndex) {
-      setCurrentIndex(0);
-      if (updated.length > 0) {
-        audioRef.current.src = updated[0].url;
-        audioRef.current.play();
-      } else {
-        setIsPlaying(false);
+  if (index === currentIndex) {
+    const newIndex = 0;
+    setCurrentIndex(newIndex);
+
+    if (updated.length > 0) {
+      audioRef.current.pause();             // pause current audio
+      audioRef.current.src = updated[newIndex].url;
+      audioRef.current.load();              // reload audio
+      try {
+        await audioRef.current.play();      // safely play
+        setIsPlaying(true);
+      } catch (err) {
+        console.log("Audio play error:", err);
       }
+    } else {
+      setIsPlaying(false);
     }
-  };
+  } else if (index < currentIndex) {
+    // Adjust currentIndex if a previous song is removed
+    setCurrentIndex((prev) => prev - 1);
+  }
+};
+
 
   return (
     <div className="App">
