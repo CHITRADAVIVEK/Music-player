@@ -7,6 +7,8 @@ function App() {
   const [playlist, setPlaylist] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const currentSong = playlist[currentIndex];
+
 
   // Upload songs
   const handleUpload = (files) => {
@@ -19,19 +21,38 @@ function App() {
   };
 
   // Play or Pause
-  const handlePlayPause = () => {
-    const audio = audioRef.current;
+ const handlePlayPause = async () => {
+  if (!currentSong) {
+    alert("Please upload or select a song first");
+    return;
+  }
 
-    if (!playlist.length) return;
-
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play();
+  if (isPlaying) {
+    audioRef.current.pause();
+    setIsPlaying(false);
+  } else {
+    try {
+      await audioRef.current.play();
+      setIsPlaying(true);
+    } catch (err) {
+      console.log("Playback failed:", err);
     }
+  }
+};
 
-    setIsPlaying(!isPlaying);
-  };
+useEffect(() => {
+  if (currentSong && audioRef.current) {
+    audioRef.current.src = currentSong.url;
+
+    // Only attempt play if isPlaying was true
+    if (isPlaying) {
+      audioRef.current.play().catch(err => {
+        console.log("Play interrupted:", err);
+      });
+    }
+  }
+}, [currentIndex, currentSong]);
+
 
   // Next Song
   const handleNext = () => {
