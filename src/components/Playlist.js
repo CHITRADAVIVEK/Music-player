@@ -1,30 +1,5 @@
 import React from "react";
 
-export default function Playlist({ playlist, currentIndex, onSelect, onRemove }) {
-  return (
-    <div className="playlist">
-      <h3>Playlist</h3>
-
-      {playlist.length === 0 && <p>No songs added yet.</p>}
-
-      {playlist.map((song, index) => (
-        <div
-          key={index}
-          className={`playlist-item ${index === currentIndex ? "active" : ""}`}
-          onClick={() => onSelect(index)}
-        >
-          <span>{index + 1}. {song.name}</span>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove(index);
-            }}
-          >
-            ✕
-          </button>
-        </div>
-      ))}
 export default function Playlist({
   playlist,
   currentIndex,
@@ -48,17 +23,11 @@ export default function Playlist({
           {playlist.map((song, idx) => (
             <div
               key={idx}
-              className={
-                idx === currentIndex
-                  ? "playlist-item active"
-                  : "playlist-item"
-              }
+              className={idx === currentIndex ? "playlist-item active" : "playlist-item"}
               onClick={() => onSelectSong(idx)}
             >
               <div className="song-index">{idx + 1}</div>
-
               <div className="song-title">{song.name}</div>
-
               <button
                 className="btn-remove"
                 onClick={(e) => {
@@ -66,7 +35,7 @@ export default function Playlist({
                   onRemoveSong(idx);
                 }}
               >
-                X
+                ✕
               </button>
             </div>
           ))}
